@@ -1,0 +1,23 @@
+{
+  "tables": [
+    {
+      "name": "customers",
+      "columns": [
+        { "name": "id", "type": "SERIAL", "primary_key": true },
+        { "name": "name", "type": "TEXT" },
+        { "name": "email", "type": "TEXT", "unique": true },
+        { "name": "created_at", "type": "TIMESTAMP" }
+      ]
+    },
+    {
+      "name": "orders",
+      "columns": [
+        { "name": "id", "type": "SERIAL", "primary_key": true },
+        { "name": "customer_id", "type": "INTEGER", "foreign_key": "customers(id)" },
+        { "name": "product", "type": "TEXT" },
+        { "name": "amount", "type": "DECIMAL(10,2)" },
+        { "name": "order_date", "type": "TIMESTAMP" }
+      ]
+    }
+  ]
+}
