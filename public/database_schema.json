@@ -1,23 +1,191 @@
 {
-  "tables": [
-    {
-      "name": "customers",
-      "columns": [
-        { "name": "id", "type": "SERIAL", "primary_key": true },
-        { "name": "name", "type": "TEXT" },
-        { "name": "email", "type": "TEXT", "unique": true },
-        { "name": "created_at", "type": "TIMESTAMP" }
-      ]
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CRM Inventory Management System",
+  "type": "object",
+  "properties": {
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      }
     },
-    {
-      "name": "orders",
-      "columns": [
-        { "name": "id", "type": "SERIAL", "primary_key": true },
-        { "name": "customer_id", "type": "INTEGER", "foreign_key": "customers(id)" },
-        { "name": "product", "type": "TEXT" },
-        { "name": "amount", "type": "DECIMAL(10,2)" },
-        { "name": "order_date", "type": "TIMESTAMP" }
-      ]
+    "suppliers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" },
+          "address": { "type": "string" }
+        },
+        "required": ["id", "name", "email"]
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "sku": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "category_id": { "type": "integer" },
+          "supplier_id": { "type": "integer" },
+          "cost_price": { "type": "number" },
+          "selling_price": { "type": "number" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "sku", "name", "category_id", "supplier_id", "cost_price", "selling_price"]
+      }
+    },
+    "warehouses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "location": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": { "type": "integer" },
+          "warehouse_id": { "type": "integer" },
+          "quantity": { "type": "integer" },
+          "last_updated": { "type": "string", "format": "date-time" }
+        },
+        "required": ["product_id", "warehouse_id", "quantity"]
+      }
+    },
+    "customers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" },
+          "address": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      }
+    },
+    "sales_orders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "customer_id": { "type": "integer" },
+          "order_date": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["PENDING", "SHIPPED", "DELIVERED", "CANCELLED"] },
+          "total_amount": { "type": "number" }
+        },
+        "required": ["id", "customer_id", "order_date", "status"]
+      }
+    },
+    "sales_order_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sales_order_id": { "type": "integer" },
+          "product_id": { "type": "integer" },
+          "quantity": { "type": "integer" },
+          "unit_price": { "type": "number" }
+        },
+        "required": ["sales_order_id", "product_id", "quantity", "unit_price"]
+      }
+    },
+    "purchase_orders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "supplier_id": { "type": "integer" },
+          "order_date": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["PENDING", "RECEIVED", "CANCELLED"] },
+          "total_amount": { "type": "number" }
+        },
+        "required": ["id", "supplier_id", "order_date", "status"]
+      }
+    },
+    "purchase_order_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "purchase_order_id": { "type": "integer" },
+          "product_id": { "type": "integer" },
+          "quantity": { "type": "integer" },
+          "unit_price": { "type": "number" }
+        },
+        "required": ["purchase_order_id", "product_id", "quantity", "unit_price"]
+      }
+    },
+    "inventory_movements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "product_id": { "type": "integer" },
+          "warehouse_id": { "type": "integer" },
+          "movement_type": { "type": "string", "enum": ["INBOUND", "OUTBOUND", "TRANSFER"] },
+          "quantity": { "type": "integer" },
+          "reference": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "product_id", "warehouse_id", "movement_type", "quantity"]
+      }
+    },
+    "audit_logs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "table_name": { "type": "string" },
+          "operation": { "type": "string", "enum": ["INSERT", "UPDATE", "DELETE"] },
+          "record_id": { "type": "integer" },
+          "changed_data": { "type": "object" },
+          "changed_by": { "type": "string" },
+          "changed_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "table_name", "operation", "record_id", "changed_by", "changed_at"]
+      }
     }
+  },
+  "required": [
+    "categories",
+    "suppliers",
+    "products",
+    "warehouses",
+    "inventory",
+    "customers",
+    "sales_orders",
+    "sales_order_items",
+    "purchase_orders",
+    "purchase_order_items",
+    "inventory_movements",
+    "audit_logs"
   ]
 }
